@@ -105,6 +105,72 @@ Endpoint similarity dilindungi autentikasi JWT. `/health` tidak memerlukan token
 
 ## Endpoint
 
+### `POST /api/documents/validate`
+
+Menerima satu file PDF sebagai `multipart/form-data`, mempertahankan teks per halaman, mengekstrak tabel ke baris/kolom, dan menyertakan teks footer per halaman. Ekstraksi memakai PyMuPDF; urutan teks disusun menurut posisi halaman. Jika area footer tidak memiliki teks PDF, sistem mencoba OCR dengan Tesseract. OCR memerlukan instalasi Tesseract dan data bahasa `eng` serta `ind` di komputer yang menjalankan API. Teks hasil ekstraksi lalu dibandingkan dengan struktur Handover dari `scripts/extracted-handover-template.txt` serta kriteria Business Case di validator. Untuk Handover, kelima bagian bernomor I–V diambil dari file template dan wajib ditemukan sesuai urutannya; teks isi yang berubah-ubah tidak perlu sama persis. Respons menyertakan tipe dokumen, skor, alasan, bagian yang cocok/belum ditemukan, teks footer, dan tabel.
+
+Contoh request dari PowerShell:
+
+```powershell
+$headers = @{ Authorization = "Bearer <JWT>" }
+Invoke-RestMethod `
+  -Uri "http://127.0.0.1:8000/api/documents/validate" `
+  -Method Post `
+  -Headers $headers `
+  -Form @{ file = Get-Item "C:\docs\handover.pdf" }
+```
+
+Respons sukses:
+
+```json
+{
+  "result": {
+    "fileName": "handover.pdf",
+    "isValid": true,
+    "documentType": "business_case",
+    "matchPercentage": 80.0,
+    "matchedCount": 4,
+    "totalMarkers": 5,
+    "reason": "Dokumen teridentifikasi sebagai Business Case. 4/5 parameter utama terpenuhi (80.00%).",
+    "matchedMarkers": [
+      "Problem / Current Situation",
+      "Objective / Target",
+      "Proposed Solution / Improvement",
+      "Benefit / Impact"
+    ],
+    "unmatchedMarkers": ["Implementation / Action Plan"]
+  },
+  "pages": [
+    {
+      "pageNumber": 2,
+      "footerText": "BPI_KPC_KPC_BPIMSE3.06_DOC_TMPi_003 | Page 2 of 4",
+      "footerOcrUsed": false,
+      "ocrWarning": null
+    }
+  ],
+  "tables": [
+    {
+      "pageNumber": 2,
+      "rows": [
+        ["No.", "KPI Proyek", "Plan (Before)", "Actual (After)"],
+        ["A.", "Financial Benefit", "100 liter/hari", "90 liter/hari"]
+      ]
+    }
+  ]
+}
+```
+
+Endpoint dilindungi JWT Bearer Token dan menerima PDF hingga 20 MB. `400` dikembalikan untuk file selain PDF, PDF rusak/terenkripsi, atau PDF tanpa teks yang dapat diekstrak. OCR otomatis saat ini ditujukan untuk footer; OCR seluruh halaman hasil scan belum diaktifkan. Untuk OCR footer, instal Tesseract OCR dan data bahasa `eng` serta `ind` secara terpisah dari paket Python.
+
+Untuk memeriksa hasil ekstraksi secara lokal tanpa memanggil API:
+
+```powershell
+python scripts/test_pdf_extraction.py "C:\docs\handover.pdf"
+python scripts/test_pdf_extraction.py "C:\docs\handover.pdf" --output extracted.txt --tables-output candidate-tables.json
+```
+
+`tables.json` menyimpan struktur header tabel isi dan satu struktur footer yang berulang pada halaman 2 sampai akhir. API membandingkan header tabel; isi baris, judul proyek, nilai metadata, dan nomor halaman tidak dibandingkan sebagai nilai tetap. File `candidate-tables.json` adalah hasil ekstraksi otomatis untuk PDF kandidat. Respons menyertakan `tableValidation` yang menunjukkan tabel yang cocok dan header yang belum ditemukan.
+
 ### `POST /api/ideas/similarity/check`
 
 Menggunakan Gemini dengan prompt, validasi, dan pemetaan skor evaluator yang sama dengan endpoint Groq.
@@ -226,6 +292,31 @@ app/
 generate_api_token.py
 requirements.txt
 ```
+
+## Validasi handover terjadwal
+
+Batch membaca lampiran pada `dbo.Ideas.AttachmentFiles`, lalu hanya memilih nama
+file yang cocok dengan `*_HandoverDocument_*`. Path relatif terlebih dahulu
+diselesaikan terhadap `ATTACHMENT_ROOT`, lalu terhadap direktori aplikasi.
+Validator batch saat ini hanya mendukung PDF; format lain dicatat dengan status
+`unsupported` dan tidak dicoba ulang. Status `error` dapat dicoba kembali pada
+batch berikutnya. Hasil validasi (`valid` atau `invalid`) tidak diproses ulang
+selama nama file yang sama tercatat untuk `IdeaId` tersebut.
+
+Jalankan `scripts/migrate_document_validation_batch.sql` pada database sebelum
+mengaktifkan scheduler. Atur `ATTACHMENT_ROOT` ke root yang benar-benar memuat
+path relatif dalam `AttachmentFiles`, lalu atur konfigurasi berikut:
+
+```env
+INDEX_SCHEDULER_ENABLED=true
+INDEX_SCHEDULER_HOUR=2
+INDEX_SCHEDULER_MINUTE=0
+INDEX_SCHEDULER_TIMEZONE=Asia/Makassar
+```
+
+Scheduler berjalan di dalam proses FastAPI. Jalankan aplikasi dengan satu worker
+(satu instance) agar batch tidak dieksekusi bersamaan oleh beberapa proses.
+Riwayat batch disimpan di `dbo.IdeaDocumentValidationHistory`.
 
 ## Catatan data
 

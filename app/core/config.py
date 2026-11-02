@@ -9,6 +9,10 @@ DB_DATABASE = os.getenv("DB_DATABASE", "")
 DB_UID = os.getenv("DB_UID") or None
 DB_PASSWORD = os.getenv("DB_PASSWORD") or None
 ATTACHMENT_ROOT = os.getenv("ATTACHMENT_ROOT", "attachments").strip()
+INDEX_SCHEDULER_ENABLED = os.getenv("INDEX_SCHEDULER_ENABLED", "false").strip().lower() in {"1", "true", "yes", "on"}
+INDEX_SCHEDULER_HOUR = int(os.getenv("INDEX_SCHEDULER_HOUR", "2"))
+INDEX_SCHEDULER_MINUTE = int(os.getenv("INDEX_SCHEDULER_MINUTE", "0"))
+INDEX_SCHEDULER_TIMEZONE = os.getenv("INDEX_SCHEDULER_TIMEZONE", "Asia/Makassar").strip()
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "").strip()
 GEMINI_MODEL = os.getenv("GEMINI_MODEL", "").strip()

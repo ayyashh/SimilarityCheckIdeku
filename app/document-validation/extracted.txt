@@ -1,0 +1,150 @@
+SISTEM MANAJEMEN PENINGKATAN
+      KINERJA BISNIS ELEMENT 3.06
+
+
+
+  RINGKASAN & LAPORAN PENYERAHAN /
+
+PROJECT SUMMARY & HANDOVER PROJECT
+
+
+           (JUDUL PROYEK)
+
+BUSINESS PERFORMANCE IMPROVEMENT MSE 3.06
+                                                                         Template
+
+                          Judul Proyek
+
+I. Pendahuluan
+
+ ( menjelaskan latar belakang proyek, kondisi sebelum proyek berlangsung, ringkasan proyek, manfaat proyek )
+
+
+II. Gambaran Umum
+(menjelaskan apa saja yang akan dilakukan  di proyek  tersebut, hal – hal yang  diteliti,  factor-faktor yang
+berpengaruh, stakeholder, serta penjelasan solusi yang diajukan, dll)
+
+III. Indikator Kesuksesan Proyek
+(menjelaskan aspek apa saja yang menjadi indikator kesuksesan proyek serta besar penghematan biaya)
+
+  No.                 KPI Proyek                      Plan (Before)             Actual (After)
+  A.     Financial Benefit (Tangible):
+            - Contoh: Mengurangi Konsumsi Bahan Bakar      - 100 liter/hari = $110/hari     - 90 liter/hari = $99/hari
+            -
+            -
+  B.     Non-Financial Benefit (Intangible):
+            - Contoh: Mengurangi Lead Time Approval           - Approval 3 hari/doc            - Approval 2 hari/doc
+            -
+            -
+
+
+
+
+
+              Document Title               Approved By     Effective Date        Uncontrolled Document
+         Report and Handover Project xxx       GM BSAI       1 Sept 2026    When Printed or Out of CI-Portal
+
+            Doc Registration No.                 Version      Next Review Due
+                                                                                Page 2 of 4
+    BPI_KPC_KPC_BPIMSE3.06_DOC_TMPi_003           1..0          31 Aug 2031
+
+BUSINESS PERFORMANCE IMPROVEMENT MSE 3.06
+                                                                         Template
+
+
+
+IV. Outstanding Tasks Handed Over
+
+                                                               Handed Over to             Due Date
+                     Outstanding Tasks
+                                                     Name              Position          (or notes)
+
+
+      1.
+
+
+
+
+      2.
+
+
+
+      3.
+
+
+
+      4.
+
+
+
+V. Regular Activities Handed Over
+
+
+                                            Handed Over to
+            Routine Tasks                                                             Period            Note
+                                   Name               Position
+
+
+  1.
+
+
+
+  2.
+
+
+
+                                                   Kota, HH/BB/TTTT
+
+                 Agreed by                                       Position                            Signature
+
+
+      1.
+
+
+
+
+
+              Document Title               Approved By     Effective Date        Uncontrolled Document
+         Report and Handover Project xxx       GM BSAI       1 Sept 2026    When Printed or Out of CI-Portal
+
+            Doc Registration No.                 Version      Next Review Due
+                                                                                Page 3 of 4
+    BPI_KPC_KPC_BPIMSE3.06_DOC_TMPi_003           1..0          31 Aug 2031
+
+BUSINESS PERFORMANCE IMPROVEMENT MSE 3.06
+                                                                      Template
+
+
+                                  Acknowledged by:
+
+
+
+
+Project Owner & Champion                                                                  Divisional Lead CI
+
+
+
+                                                                  Name
+                                                                                              Position Name
+       Name
+      Position Name
+
+
+                                                 Project Sponsor
+
+
+                                                               atari
+
+                                                                                     . Name
+                                       General Manager XXX
+
+
+
+
+
+           Document Title               Approved By     Effective Date        Uncontrolled Document
+     Report and Handover Project xxx       GM BSAI       1 Sept 2026    When Printed or Out of CI-Portal
+
+         Doc Registration No.                 Version      Next Review Due
+                                                                             Page 4 of 4
+BPI_KPC_KPC_BPIMSE3.06_DOC_TMPi_003           1..0          31 Aug 2031

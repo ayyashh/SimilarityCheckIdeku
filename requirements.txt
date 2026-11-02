@@ -5,3 +5,5 @@ sentence-transformers
 pyodbc
 python-dotenv
 PyJWT
+PyMuPDF>=1.24.0
+python-multipart

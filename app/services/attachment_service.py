@@ -1,12 +1,3 @@
-"""
-AttachmentService
-=================
-Bertanggung jawab penuh atas siklus hidup attachment 1 Idea:
-mencari file, memilih stage terbesar, mengurutkan, melakukan
-ekstraksi lewat Dispatcher, menggabungkan hasil, dan mencatat
-warning per kategori tanpa pernah menghentikan proses indexing.
-"""
-
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -48,14 +39,6 @@ class AttachmentWarning:
 
 @dataclass
 class AttachmentFileInfo:
-    """
-    Metadata hasil parsing nama file.
-
-    Mendukung 2 format:
-    - Format baru  : IMS-004837_S2_001.pptx  -> stage=2 (current stage idea)
-    - Format lama  : IMS-004837-432531.pdf   -> stage=-1 (penanda format lama,
-                      belum ada info stage eksplisit di nama file)
-    """
 
     idea_code: str
     stage: int
@@ -73,7 +56,6 @@ class AttachmentFileInfo:
 
 @dataclass
 class AttachmentFileResult:
-    """Hasil ekstraksi dan validasi 1 file attachment."""
 
     file_name: str
     file_path: str
@@ -103,11 +85,6 @@ class AttachmentFileResult:
 
 @dataclass
 class AttachmentResult:
-    """
-    Object lengkap hasil pemrosesan attachment 1 Idea.
-    Inilah kontrak yang dikonsumsi langsung oleh IndexBuilder / IndexerRunner
-    -- IndexerRunner tidak perlu tahu detail dispatcher/OCR sama sekali.
-    """
 
     idea_code: str
     attachment_found: bool
@@ -182,21 +159,6 @@ ENABLE_STAGE_FILTER = False
 
 
 class AttachmentService:
-    """
-    Production Attachment Service
-
-    Responsibilities
-    ----------------
-    1. Mencari attachment berdasarkan IdeaCode
-       (format baru : IMS-{IdeaCode}_S{Stage}_{Sequence}.{Extension}
-        format lama  : IMS-{IdeaCode}-{Sequence}.{Extension})
-    2. Memilih Stage terbesar apabila ada beberapa stage (production mode)
-    3. Mengurutkan attachment berdasarkan nomor urut
-    4. Memanggil Dispatcher untuk tiap attachment
-    5. Menggabungkan hasil ekstraksi menjadi AttachmentText
-    6. Mencatat warning per kategori tanpa pernah menghentikan proses
-    7. Menghasilkan AttachmentResult lengkap untuk IndexBuilder
-    """
 
     # Format baru: IMS-004837_S2_001.pptx -> stage & order eksplisit di nama file
     STAGE_PATTERN = re.compile(r"^IMS-(\d+)_S(\d)_([0-9]{3}).*", re.IGNORECASE)
@@ -522,11 +484,6 @@ class AttachmentService:
     # ==================================================================
 
     def process(self, idea_code: str) -> AttachmentResult:
-        """
-        Entry point utama yang dipakai IndexBuilder.
-        Selalu mengembalikan AttachmentResult, tidak pernah raise,
-        tidak pernah menghentikan proses indexing idea lain.
-        """
 
         files = self.find_files(idea_code)
 

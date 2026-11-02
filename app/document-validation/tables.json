@@ -1,0 +1,37 @@
+[
+  {
+    "rows": [
+      ["No\n.", "KPI Proyek", "Plan (Before)", "Actual (After)"],
+      ["A\n.", "", "", ""]
+    ]
+  },
+  {
+    "rows": [
+      ["Outstanding Tasks", "Handed Over to", null, "Due Date"],
+      [null, "Name", "Position", "(or notes)"],
+      ["1."]
+    ]
+  },
+  {
+    "rows": [
+      ["Routine Tasks", "Handed Over to", null, "Period", "Note"],
+      [null, "Name", "Position", null, null],
+      ["1."]
+    ]
+  },
+  {
+    "rows": [
+      [""],
+      ["Agreed by", "Position", "Signature"],
+      ["1."]
+    ]
+  },
+  {
+    "rows": [
+      ["Document Title", "Approved By", "Effective Date", "Uncontrolled Document"],
+      ["{documentTitle}", "{approvedBy}", "{effectiveDate}", "When Printed or Out of CI-Portal"],
+      ["Doc Registration No.", "Version", "Next Review Due", "Page"],
+      ["{registrationNo}", "{version}", "{nextReviewDue}", "{pageNumber} of {totalPages}"]
+    ]
+  }
+]

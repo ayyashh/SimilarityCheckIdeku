@@ -2,9 +2,15 @@ from __future__ import annotations
 
 import logging
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, File, HTTPException, UploadFile
 
 from app.api.schemas import (
+    DocumentValidationFileResult,
+    DocumentValidationHeaderCheck,
+    DocumentValidationPage,
+    DocumentValidationResponse,
+    DocumentValidationTable,
+    DocumentValidationTableCheck,
     SubmitSimilarityRequest,
     SubmitSimilarityResponse,
 )
@@ -12,6 +18,10 @@ from app.api.schemas import (
 from app.services.submit_similarity import (
     SubmitSimilarityService,
     InvalidIdeaNameError,
+)
+from app.services.document_validation import (
+    DocumentValidationService,
+    InvalidDocumentError,
 )
 
 
@@ -22,8 +32,87 @@ router = APIRouter(
     prefix="/api/ideas/similarity",
     tags=["submit-similarity"],
 )
+document_validation_router = APIRouter(
+    prefix="/api/documents",
+    tags=["document-validation"],
+)
 
 _service = SubmitSimilarityService()
+_document_validation_service = DocumentValidationService()
+
+
+@document_validation_router.post(
+    "/validate",
+    response_model=DocumentValidationResponse,
+    tags=["document-validation"],
+)
+def validate_documents(
+    file: UploadFile = File(...),
+) -> DocumentValidationResponse:
+    if not file.filename or not file.filename.lower().endswith(".pdf"):
+        raise HTTPException(status_code=400, detail="File yang diunggah harus PDF.")
+
+    try:
+        content = file.file.read(DocumentValidationService.MAX_FILE_SIZE + 1)
+        result, extraction, table_validation, header_validation = (
+            _document_validation_service.validate_pdf(content)
+        )
+    except InvalidDocumentError as ex:
+        raise HTTPException(status_code=400, detail=str(ex))
+    except Exception:
+        logger.exception("[DOCUMENT VALIDATION API] Unexpected error")
+        raise HTTPException(status_code=500, detail="Internal server error")
+
+    return DocumentValidationResponse(
+        result=DocumentValidationFileResult(
+            fileName=file.filename,
+            isValid=result.is_supported,
+            documentType=result.document_type.value,
+            matchPercentage=round(result.match_percentage * 100, 2),
+            matchedCount=result.matched_count,
+            totalMarkers=result.total_markers,
+            reason=result.reason,
+            matchedMarkers=result.matched_markers,
+            unmatchedMarkers=result.unmatched_markers,
+        ),
+        pages=[
+            DocumentValidationPage(
+                pageNumber=page.page_number,
+                headerText=page.header_text,
+                headerPresent=page.header_present,
+                footerText=page.footer_text,
+                footerOcrUsed=page.footer_ocr_used,
+                ocrWarning=page.ocr_warning,
+            )
+            for page in extraction.pages
+        ],
+        tables=[
+            DocumentValidationTable(
+                pageNumber=table.page_number,
+                rows=table.rows,
+            )
+            for table in extraction.tables
+        ],
+        tableValidation=(
+            DocumentValidationTableCheck(
+                isValid=table_validation.is_valid,
+                matchedTables=table_validation.matched_tables,
+                missingTables=table_validation.missing_tables,
+            )
+            if table_validation is not None
+            else None
+        ),
+        headerValidation=(
+            DocumentValidationHeaderCheck(
+                isValid=header_validation.is_valid,
+                requiredText=header_validation.required_text,
+                checkedPages=header_validation.checked_pages,
+                missingPages=header_validation.missing_pages,
+            )
+            if header_validation is not None
+            else None
+        ),
+    )
 
 @router.post(
     "/check",
